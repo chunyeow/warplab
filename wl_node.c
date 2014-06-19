@@ -49,7 +49,7 @@ u8 numRadios;
 // Choose the Ethernet device
 #define WL_ETH            WL_ETH_A
 
-
+extern u32 reset_timer_control;
 
 /*****************************************************************************/
 /**
@@ -664,6 +664,12 @@ int node_init(){
 ******************************************************************************/
 int global_initialize(){
 	int status = 0;
+
+	if (reset_timer_control == 1) {
+		xil_printf("Set timer as down counter\n");
+		wl_setback_timer();
+		reset_timer_control = 0;	
+	}
 
 	status = ifc_init();
 	if(status != 0) {

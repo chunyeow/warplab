@@ -35,6 +35,8 @@ unsigned char Radios_WirelessChan;
 unsigned char Radios_Tx_LPF_Corn_Freq;
 unsigned char Radios_Rx_LPF_Corn_Freq;
 
+/* Global control for timestamping purpose */
+u32 reset_timer_control = 0;
 
 //TODO: Would readback of gains be useful? Tempted to leave that in the domain of m-code
 //unsigned char TxGain_BB[NUMRADIOS];
@@ -72,14 +74,32 @@ int ifc_processCmd(const wl_cmdHdr* cmdHdr,const void* cmdArgs, wl_respHdr* resp
 
 	switch(cmdID){
 			case IFC_TX_EN:
+				if (reset_timer_control == 0) {
+					xil_printf("Set Timer as up counter\n");
+					wl_set_timer();
+					reset_timer_control = 1;
+				}
+				xil_printf("Timestamping Tx_En %ld ms\n", get_timestamp()/(TIMER_FREQ/1000));
 				rfsel =  Xil_Ntohl(cmdArgs32[0]);
 				radio_controller_TxEnable(RC_BASEADDR, rfsel);
 			break;
 			case IFC_RX_EN:
+				if (reset_timer_control == 0) {
+					xil_printf("Set Timer as up counter\n");
+					wl_set_timer();
+					reset_timer_control = 1;
+				}
+				xil_printf("Timestamping Rx_En %ld ms\n", get_timestamp()/(TIMER_FREQ/1000));
 				rfsel =  Xil_Ntohl(cmdArgs32[0]);
 				radio_controller_RxEnable(RC_BASEADDR, rfsel);
 			break;
 			case IFC_TXRX_DIS:
+				if (reset_timer_control == 0) {
+					xil_printf("Set Timer as up counter\n");
+					wl_set_timer();
+					reset_timer_control = 1;
+				}
+				xil_printf("Timestamping TxRx_Dis %ld ms\n", get_timestamp()/(TIMER_FREQ/1000));
 				rfsel =  Xil_Ntohl(cmdArgs32[0]);
 				radio_controller_TxRxDisable(RC_BASEADDR, rfsel);
 			break;
