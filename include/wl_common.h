@@ -119,6 +119,9 @@ unsigned char sevenSegmentMap(unsigned char x);
 
 #ifdef WARP_HW_VER_v3
 void usleep(unsigned int duration);
+void wl_set_timer();
+void wl_setback_timer();
+u32 get_timestamp();
 #endif
 
 

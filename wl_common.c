@@ -117,6 +117,32 @@ void usleep(unsigned int duration){
 	XTmrCtr_Reset(TmrCtrInstancePtr,0);
 	return;
 }
+
+void wl_set_timer() {
+	/* Set timer as up counter */
+	XTmrCtr_SetOptions(&TimerCounter, 0, 0);
+	XTmrCtr_SetResetValue(&TimerCounter, 0, 0);
+	XTmrCtr_Reset(&TimerCounter, 0);
+	XTmrCtr_Start(&TimerCounter, 0);
+}
+
+void wl_setback_timer() {
+	/* Set timer as down counter again */
+	XTmrCtr_SetOptions(&TimerCounter, 0, (XTC_DOWN_COUNT_OPTION));
+	XTmrCtr_SetResetValue(&TimerCounter, 0, 0);
+	XTmrCtr_Reset(&TimerCounter, 0);
+	XTmrCtr_Start(&TimerCounter, 0);
+}
+
+u32 get_timestamp() {
+	u32 val = XTmrCtr_GetValue(&TimerCounter, 0);
+	/* Reset the counter if counter has reached its max value */
+	if (val == 0){
+		XTmrCtr_Reset(&TimerCounter,0);
+		val = XTmrCtr_GetValue(&TimerCounter, 0);
+	}
+	return val;
+}
 #endif
 
 int wl_gpio_debug_initialize(){
